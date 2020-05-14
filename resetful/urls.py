@@ -22,5 +22,7 @@ from resetful import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('apps/', include("apps.urls")),
+    path('day4test/',include('day4test.urls')),
+    path('day4hk/', include('day4homeworkapp.urls')),
     url(r"^media/(?P<path>.*)", serve, {"document_root": settings.MEDIA_ROOT}),
 ]
