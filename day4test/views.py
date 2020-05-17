@@ -195,30 +195,76 @@ class BookAPIVIewV2(APIView):
             "results": serializers.BookModelSerializerV2(book_obj).data
         })
 
+    # def patch(self, request, *args, **kwargs):
+    #     """
+    #     单局部改：修改一个对象的任意字段
+    #     修改的字段不同
+    #     """
+    #
+    #     request_data = request.data
+    #     book_id = kwargs.get("id")
+    #
+    #     try:
+    #         book_obj = Book.objects.get(pk=book_id, is_delete=False)
+    #     except:
+    #         return Response({
+    #             "status": 500,
+    #             "message": "图书不存在",
+    #         })
+    #     # partial=True  指定序列化器为更新部分字段  有哪个字段的值就修改哪个字段  没有不修改
+    #     book_ser = serializers.BookModelSerializerV2(data=request_data, instance=book_obj, partial=True)
+    #     book_ser.is_valid(raise_exception=True)
+    #     book_ser.save()
+    #
+    #     return Response({
+    #         "status": 200,
+    #         "message": "更新成功",
+    #         "results": serializers.BookModelSerializerV2(book_obj).data
+    #     })
+
     def patch(self, request, *args, **kwargs):
-        """
-        单局部改：修改一个对象的任意字段
-        修改的字段不同
-        """
 
         request_data = request.data
         book_id = kwargs.get("id")
 
-        try:
-            book_obj = Book.objects.get(pk=book_id, is_delete=False)
-        except:
+        if book_id and isinstance(request_data, dict):
+            book_ids = [book_id, ]
+            request_data = [request_data, ]
+        elif not book_id and isinstance(request_data, list):
+            book_ids = []
+            for dic in request_data:
+                pk = dic.pop("pk", None)
+                if pk:
+                    book_ids.append(pk)
+                else:
+                    return Response({
+                        "status": 500,
+                        "message": "ID不存在"
+                    })
+        else:
             return Response({
                 "status": 500,
-                "message": "图书不存在",
+                "message": "数据不存或格式有误"
             })
-        # partial=True  指定序列化器为更新部分字段  有哪个字段的值就修改哪个字段  没有不修改
-        book_ser = serializers.BookModelSerializerV2(data=request_data, instance=book_obj, partial=True)
+
+        book_list = []
+        # 不要循环中对列表的长度做操作!!!!!!!!
+        new_data = []
+        for index, pk in enumerate(book_ids):
+            try:
+                book_obj = Book.objects.get(pk=pk)
+                book_list.append(book_obj)
+                new_data.append(request_data[index])
+            except:
+                continue
+
+        book_ser = serializers.BookModelSerializerV2(data=new_data, instance=book_list, partial=True, many=True)
         book_ser.is_valid(raise_exception=True)
         book_ser.save()
 
         return Response({
             "status": 200,
             "message": "更新成功",
-            "results": serializers.BookModelSerializerV2(book_obj).data
+            "results": serializers.BookModelSerializerV2(book_list, many=True).data
         })
 

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.models import Book
+from apps.models import Book
 
 
 class BookListSerializer(serializers.ListSerializer):
@@ -20,8 +20,8 @@ class BookModelSerializer(serializers.ModelSerializer):
 
         extra_kwargs = {
             "book_name": {
-                "required": True,  # 设置为必填字段
-                "min_length": 5,  # 设置最小长度
+                "required": True,
+                "min_length": 3,
                 "error_messages": {
                     "required": "图书名是必填的",
                     "min_length": "图书名长度不够"
@@ -31,16 +31,16 @@ class BookModelSerializer(serializers.ModelSerializer):
                 "write_only": True  # 只参与反序列化
             },
             "publish": {
-                "write_only": True  # 只参与反序列化
+                "write_only": True
             },
             "author_list": {
                 "read_only": True  # 序列化
             },
             "publish_name": {
-                "read_only": True  # 序列化
+                "read_only": True
             },
             "pic": {
-                "read_only": True  # 序列化
+                "read_only": True
             },
         }
 

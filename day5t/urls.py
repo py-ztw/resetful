@@ -1,6 +1,6 @@
 from django.urls import path
 
-from apps import views
+from day5t import views
 
 urlpatterns = [
 
