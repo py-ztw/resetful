@@ -1,5 +1,5 @@
 asgiref==3.2.7
-Django==3.0
+Django==3.0.7
 djangorestframework==3.10.0
 djangorestframework-stubs==1.1.0
 itsdangerous==1.1.0
